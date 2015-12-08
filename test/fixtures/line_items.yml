@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  quantity: MyString
+  product_name: MyString
+  net_total: 1.5
+  gross_total: 1.5
+
+two:
+  quantity: MyString
+  product_name: MyString
+  net_total: 1.5
+  gross_total: 1.5

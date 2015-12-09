@@ -23,7 +23,8 @@ module Ordertracker
       ## This takes care of creating order
       post do
         Order.create!({
-          status:params[:status],
+          customer_name:params[:customer_name],
+          status:"DRAFT",
           order_date:params[:order_date],
         })
       end
@@ -32,7 +33,7 @@ module Ordertracker
       desc "update an order status"
       params do
         requires :id, type: String
-        requires :status, type:String
+        requires :status, type: String, values: ['DRAFT', 'PLACED', 'CANCELLED']
       end
       put ':id' do
         Order.find(params[:id]).update({

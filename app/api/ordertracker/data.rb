@@ -30,15 +30,19 @@ module Ordertracker
       end
 
       #UPDATE
+
       desc "update an order status"
       params do
         requires :id, type: String
-        requires :status, type: String, values: ['DRAFT', 'PLACED', 'CANCELLED']
+        requires :status, type:String
       end
       put ':id' do
+        if ((params[:status]==="PLACED" && Order.find(params[:id]).status==="DRAFT" && Order.find(params[:id]).line_items.length >= 1) || (Order.find(params[:id]).status==="DRAFT" && params[:status]==="CANCELLED")) then
         Order.find(params[:id]).update({
-          status:params[:status]
-        })
+          status:params[:status]})
+        else
+          return "Error: you cannot change the status of an order that does not have any line items"
+        end
       end
     end
   end

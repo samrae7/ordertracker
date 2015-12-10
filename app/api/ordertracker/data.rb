@@ -34,14 +34,23 @@ module Ordertracker
       desc "update an order status"
       params do
         requires :id, type: String
-        requires :status, type:String
+        optional :status, type:String
+        optional :customer_name, type: String
       end
+
       put ':id' do
-        if ((params[:status]==="PLACED" && Order.find(params[:id]).status==="DRAFT" && Order.find(params[:id]).line_items.length >= 1) || (Order.find(params[:id]).status==="DRAFT" && params[:status]==="CANCELLED")) then
-        Order.find(params[:id]).update({
-          status:params[:status]})
+        # take whole block in the if bracket and make a method for it
+        if Order.find(params[:id]).status==="DRAFT" then
+          if ((params[:status]==="PLACED" && Order.find(params[:id]).line_items.length >= 1) || params[:status]==="CANCELLED") then
+            Order.find(params[:id]).update({
+            status:params[:status], customer_name:params[:customer_name]})
+          elsif !params[:status]
+            Order.find(params[:id]).update({customer_name:params[:customer_name]})
+          else
+            return "Error: you cannot change the status of an order that does not have any line items"
+          end
         else
-          return "Error: you cannot change the status of an order that does not have any line items"
+          return "Error: only orders with DRAFT status can be changed"
         end
       end
     end

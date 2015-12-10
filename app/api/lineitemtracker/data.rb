@@ -54,12 +54,17 @@ module Lineitemtracker
       desc "update a line item quantity"
       params do
         requires :id, type: String
-        requires :quantity, type:String
+        optional :quantity, type:String
+        optional :order_id, type: Integer
       end
       put ':id' do
-        LineItem.find(params[:id]).update({
-          quantity:params[:quantity]
+        if Order.find(LineItem.find(params[:id]).order_id).status === "DRAFT" then
+          LineItem.find(params[:id]).update({
+          quantity:params[:quantity], order_id:params[:order_id]
         })
+        else
+          return "Error: line item is part of an order and that order is no longer in DRAFT status, so the line item cannot be changed"
+        end
       end
 
     end

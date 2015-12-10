@@ -23,7 +23,6 @@ module Producttracker
       params do
         requires :name, type: String
         requires :net_price, type:Float
-        # requires :vat, type:Float
         optional :vat, type: Float, default: 20
       end
       ## This takes care of creating product

@@ -37,6 +37,8 @@ module Lineitemtracker
           net_total:Product.find(params[:product_id]).net_price * params[:quantity],
           gross_total:Product.find(params[:product_id]).net_price * params[:quantity]* (Product.find(params[:product_id]).vat + 100) /100
         })
+        order = Order.find(params[:order_id])
+        order.updateTotal
       end
 
       #DELETE

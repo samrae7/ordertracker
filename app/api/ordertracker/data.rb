@@ -21,11 +21,17 @@ module Ordertracker
       #CREATE
       desc "create a new order"
       ## This takes care of creating order
+      params do
+        optional :customer_name
+        requires :order_date, type: Date
+      end
       post do
         Order.create!({
           customer_name:params[:customer_name],
           status:"DRAFT",
           order_date:params[:order_date],
+          net_total:0 ,
+          gross_total:0
         })
       end
 

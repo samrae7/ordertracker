@@ -41,7 +41,10 @@ module Producttracker
       end
 
       delete ':id' do
-        Product.find(params[:id]).destroy!
+        product = Product.find(params[:id])
+        unless product.orders.length >= 1
+          product.destroy!
+        end
       end
 
       

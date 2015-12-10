@@ -28,19 +28,24 @@ module Lineitemtracker
         requires :order_id, type: Integer
       end
       ## This takes care of creating line item
+ 
       post do
-        LineItem.create!({
-          quantity:params[:quantity],
-          product_id:params[:product_id], 
-          order_id:params[:order_id],
-          product_name:Product.find(params[:product_id]).name,
-          net_total:Product.find(params[:product_id]).net_price * params[:quantity],
-          gross_total:Product.find(params[:product_id]).net_price * params[:quantity]* (Product.find(params[:product_id]).vat + 100) /100
-        })
+        product = Product.find(params[:product_id])
         order = Order.find(params[:order_id])
-        order.updateTotal
+        if order.status==="DRAFT"
+          line_item = LineItem.create!({
+            quantity:params[:quantity],
+            product_id:params[:product_id], 
+            order_id:params[:order_id],
+            product_name:product.name
+          })
+          line_item.updateTotals
+          order.updateTotal
+        else
+          return "Line item cannot be created. Line items can only be added to orders with DRAFT status"
+        end
       end
-
+    
       #DELETE
       desc "delete a line item"
       params do
@@ -48,24 +53,41 @@ module Lineitemtracker
       end
 
       delete ':id' do
-        LineItem.find(params[:id]).destroy!
+        line_item = LineItem.find(params[:id])
+        order_id = line_item.order_id
+        order = line_item.order
+        if order.status === "DRAFT"
+          line_item.destroy!
+          order.updateTotal
+        else
+          return "Line item cannot be deleted as it belongs to an order that is not in DRAFT status"
+        end
       end
 
-      
       #UPDATE
-      desc "update a line item quantity"
+      desc "update a line item quantity and/or the order it belongs to"
       params do
         requires :id, type: String
         optional :quantity, type:String
         optional :order_id, type: Integer
+        optional :product_id, type: Integer
       end
       put ':id' do
-        if Order.find(LineItem.find(params[:id]).order_id).status === "DRAFT" then
-          LineItem.find(params[:id]).update({
-          quantity:params[:quantity], order_id:params[:order_id]
-        })
+        line_item = LineItem.find(params[:id])
+        order_id = line_item.order_id
+        quantity = line_item.quantity
+        order = line_item.order
+        if order.status === "DRAFT"  then
+          line_item.update({
+          quantity:(params[:quantity] ? params[:quantity]: quantity),
+          order_id:(params[:order_id] ? params[:order_id] : order_id),
+          product_id:(params[:product_id] ? params[:product_id] : product_id)
+          })
+          line_item.updateProduct
+          line_item.updateTotals
+          order.updateTotal
         else
-          return "Error: line item is part of an order and that order is no longer in DRAFT status, so the line item cannot be changed"
+          return "Line item cannot be changed as it belongs to an order that is not in DRAFT status"
         end
       end
 

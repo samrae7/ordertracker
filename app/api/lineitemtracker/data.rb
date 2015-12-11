@@ -3,7 +3,7 @@ module Lineitemtracker
   class Data < Grape::API
     require_relative '../../../lib/api/validations/product_quantity'
 
-    resource :line_data do
+    resource :line_items do
       #INDEX
       desc "List all line items"
       get do

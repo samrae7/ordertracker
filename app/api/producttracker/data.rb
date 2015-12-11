@@ -1,7 +1,7 @@
 module Producttracker
   class Data < Grape::API
 
-    resource :product_data do
+    resource :products do
       #INDEX
       desc "List all Products"
       get do

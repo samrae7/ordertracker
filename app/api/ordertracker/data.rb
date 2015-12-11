@@ -1,7 +1,7 @@
 module Ordertracker
   class Data < Grape::API
 
-    resource :order_data do
+    resource :orders do
       
       #INDEX
       desc "List all orders"
@@ -55,10 +55,12 @@ module Ordertracker
             order.update({customer_name:params[:customer_name]})
           elsif %w{DRAFT, CANCELLED, PLACED}.exclude? params[:status] then
             return "Not a valid status"
-          else
+          elsif order.line_items.length < 1 then 
             return "Error: you cannot change the status of an order that does not have any line items"
+          else 
+            return "error"
           end
-        else
+        else 
           return "Error: only orders with DRAFT status can be changed"
         end
       end

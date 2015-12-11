@@ -23,15 +23,15 @@ module Lineitemtracker
       desc "create a new line item"
       ## This takes care of parameter validation
       params do
-        requires :quantity, minimum_quantity: true
+        requires :quantity, type: Integer, minimum_quantity: true
         requires :product_id, type: Integer
         requires :order_id, type: Integer
       end
       ## This takes care of creating line item
  
       post do
-        product = Product.find(params[:product_id])
         order = Order.find(params[:order_id])
+        product = Product.find(params[:product_id])
         if order.status==="DRAFT"
           line_item = LineItem.create!({
             quantity:params[:quantity],
@@ -42,8 +42,9 @@ module Lineitemtracker
           line_item.updateTotals
           order.updateTotal
         else
-          return "Line item cannot be created. Line items can only be added to orders with DRAFT status"
+          return "Line item cannot be created unless the order has DRAFT status"
         end
+
       end
     
       #DELETE
@@ -65,24 +66,22 @@ module Lineitemtracker
       end
 
       #UPDATE
-      desc "update a line item quantity and/or the order it belongs to"
+      desc "update a line item quantity and/or which order it belongs to"
       params do
         requires :id, type: String
-        optional :quantity, type:String
+        optional :quantity, type: Integer, minimum_quantity: true
         optional :order_id, type: Integer
         optional :product_id, type: Integer
       end
       put ':id' do
         line_item = LineItem.find(params[:id])
-        order_id = line_item.order_id
-        quantity = line_item.quantity
-        order = line_item.order
-        product_id = line_item.product_id
+        order_id = (params[:order_id] ? params[:order_id] : line_item.order_id)
+        order = Order.find(order_id)
         if order.status === "DRAFT"  then
           line_item.update({
-          quantity:(params[:quantity] ? params[:quantity]: quantity),
+          quantity:(params[:quantity] ? params[:quantity]: line_item.quantity),
           order_id:(params[:order_id] ? params[:order_id] : order_id),
-          product_id:(params[:product_id] ? params[:product_id] : product_id)
+          product_id:(params[:product_id] ? params[:product_id] : line_item.product_id)
           })
           line_item.updateProduct
           line_item.updateTotals

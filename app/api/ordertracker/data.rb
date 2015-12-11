@@ -1,5 +1,6 @@
 module Ordertracker
   class Data < Grape::API
+    require_relative '../../../lib/api/validations/date_not_past'
 
     resource :orders do
       
@@ -23,7 +24,7 @@ module Ordertracker
       ## This takes care of creating order
       params do
         optional :customer_name
-        requires :order_date, type: Date
+        requires :order_date, type: Date, date_not_past: true
       end
       post do
         Order.create!({

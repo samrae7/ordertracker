@@ -1,9 +1,7 @@
-require_relative '../../lib/api/validations/date_not_past'
 
 class Order < ActiveRecord::Base
   has_many :line_items
   has_many :products, :through => :line_items
-  validates_with DateValidator
 
   def updateTotal
     total =  0
@@ -13,7 +11,7 @@ class Order < ActiveRecord::Base
       total += x.net_total
       gross += x.gross_total
     end  
-    self.update({net_total: total, gross_total: gross})
+    self.update({net_total: total.round(2), gross_total: gross.round(2)})
   end
 
 end

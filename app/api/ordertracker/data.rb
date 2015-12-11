@@ -46,14 +46,16 @@ module Ordertracker
       end
 
       put ':id' do
-        # take whole block in the if bracket and make a method for it
         order = Order.find(params[:id])
+        customer_name = params[:customer_name] ? params[:customer_name] : order.customer_name
         if order.status==="DRAFT" then
           if ((params[:status]==="PLACED" && order.line_items.length >= 1) || params[:status]==="CANCELLED") then
             order.update({
-            status:params[:status], customer_name:params[:customer_name]})
+            status:params[:status],
+            customer_name:customer_name
+            })
           elsif !params[:status] then
-            order.update({customer_name:params[:customer_name]})
+            order.update({customer_name:customer_name})
           elsif %w{DRAFT, CANCELLED, PLACED}.exclude? params[:status] then
             return "Not a valid status"
           elsif order.line_items.length < 1 then 

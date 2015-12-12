@@ -80,7 +80,7 @@ module Lineitemtracker
         if order.status === "DRAFT"  then
           line_item.update({
           quantity:(params[:quantity] ? params[:quantity]: line_item.quantity),
-          order_id:(params[:order_id] ? params[:order_id] : order_id),
+          order_id:order_id,
           product_id:(params[:product_id] ? params[:product_id] : line_item.product_id)
           })
           line_item.updateProduct

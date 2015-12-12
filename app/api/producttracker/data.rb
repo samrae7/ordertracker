@@ -49,15 +49,33 @@ module Producttracker
 
       
       #UPDATE
-      desc "update a prodct name"
+      desc "update a product"
       params do
         requires :id, type: String
-        requires :name, type:String
+        optional :name, type:String
+        optional :net_price, type:Float
       end
+      
       put ':id' do
-        Product.find(params[:id]).update({
-          name:params[:name]
+        product = Product.find(params[:id])
+        net_price = params[:net_price] ? params[:net_price] : product.net_price
+        name = params[:name] ? params[:name] : product.name
+        product.update({
+          name:name,
+          net_price:net_price
         })
+        if (product.line_items.length >= 1) then
+          product.line_items.each do |item|
+            item.updateProduct
+            item.updateTotals
+            if (product.orders.length >= 1) then
+              product.orders.each do |order|
+                order.updateTotal
+              end
+            end
+          end
+        return product
+        end
       end
 
     end

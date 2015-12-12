@@ -64,21 +64,7 @@ module Producttracker
           name:name,
           net_price:net_price
         })
-        if (product.line_items.length >= 1) then
-          product.line_items.each do |item|
-            item.updateProduct
-            item.updateTotals
-            if (product.orders.length >= 1) then
-              product.orders.each do |order|
-                order.updateTotal
-              end
-            end
-          end
-        return product
-        end
       end
-
     end
-
   end
 end

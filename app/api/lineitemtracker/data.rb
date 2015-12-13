@@ -28,7 +28,6 @@ module Lineitemtracker
         requires :order_id, type: Integer
       end
       ## This takes care of creating line item
- 
       post do
         order = Order.find(params[:order_id])
         product = Product.find(params[:product_id])
@@ -40,7 +39,7 @@ module Lineitemtracker
             product_name:product.name
           })
           line_item.updateTotals
-          order.updateTotal
+          order.updateTotals
         else
           return "Line item cannot be created unless the order has DRAFT status"
         end
@@ -59,7 +58,7 @@ module Lineitemtracker
         order = line_item.order
         if order.status === "DRAFT"
           line_item.destroy!
-          order.updateTotal
+          order.updateTotals
         else
           return "Line item cannot be deleted as it belongs to an order that is not in DRAFT status"
         end
@@ -83,9 +82,9 @@ module Lineitemtracker
           order_id:order_id,
           product_id:(params[:product_id] ? params[:product_id] : line_item.product_id)
           })
-          line_item.updateProduct
+          line_item.updateProductName
           line_item.updateTotals
-          order.updateTotal
+          order.updateTotals
         else
           return "Line item cannot be changed as it belongs to an order that is not in DRAFT status"
         end

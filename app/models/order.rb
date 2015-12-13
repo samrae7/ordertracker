@@ -3,7 +3,7 @@ class Order < ActiveRecord::Base
   has_many :line_items
   has_many :products, :through => :line_items
 
-  def updateTotal
+  def updateTotals
     total =  0
     gross = 0
 

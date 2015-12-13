@@ -18,8 +18,8 @@ Product.all.each_with_index {|product, index| product.orders << Order.create(cus
 LineItem.all.each do |line_item|
   line_item.update({quantity: 4})
   line_item.updateTotals
-  line_item.updateProduct
+  line_item.updateProductName
 end
 
-Order.all.each {|order| order.updateTotal}
+Order.all.each {|order| order.updateTotals}
 

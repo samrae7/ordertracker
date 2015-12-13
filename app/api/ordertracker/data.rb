@@ -43,19 +43,25 @@ module Ordertracker
         requires :id, type: String
         optional :status, type:String
         optional :customer_name, type: String
+        optional :order_date, type: Date
       end
 
       put ':id' do
         order = Order.find(params[:id])
         customer_name = params[:customer_name] ? params[:customer_name] : order.customer_name
+        order_date = params[:order_date] ? params[:order_date] : order.order_date
         if order.status==="DRAFT" then
           if ((params[:status]==="PLACED" && order.line_items.length >= 1) || params[:status]==="CANCELLED") then
             order.update({
-            status:params[:status],
-            customer_name:customer_name
-            })
+              status:params[:status],
+              customer_name:customer_name,
+              order_date:order_date
+              })
           elsif !params[:status] then
-            order.update({customer_name:customer_name})
+            order.update({
+              customer_name:customer_name,
+              order_date:order_date
+              })
           elsif %w{DRAFT, CANCELLED, PLACED}.exclude? params[:status] then
             return "Not a valid status"
           elsif order.line_items.length < 1 then 

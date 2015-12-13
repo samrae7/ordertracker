@@ -11,34 +11,59 @@
 ##Endpoints
  
 ###Products
-- pathToLocalHost/api/v1/products.json
+- PATH-TO-LOCAL-HOST/api/v1/products.json
 (GET, POST)
 
-		POST example:
+	POST example:
+		
 		{
         "name": "left handed scissors",
         "net_price": 1.19,
         "vat": 20
     	}
     
-- pathToLocalHost/api/v1/products/:id.json
+- PATH-TO-LOCAL-HOST/api/v1/products/:id.json
 (GET, PUT, DELETE)
 
 		NB: cannot update "vat"
 
 ###Line items
-- pathToLocalHost/api/v1/line_items.json
+- PATH-TO-LOCAL-HOST/api/v1/line_items.json
 (GET, POST)
-- pathToLocalHost/api/v1/line_items/:id.json
+
+	POST example:
+	
+    	{
+        "quantity": 4,
+        "product_id": 1,
+        "order_id": 12
+    	}
+    	
+    order\_id and product\_id must relate to resources that that already exist ie. they must be created before you can refer to them in a line item.
+    
+- PATH-TO-LOCAL-HOST/api/v1/line_items/:id.json
 (GET, PUT, DELETE)
 
 ###Orders
-- pathToLocalHost/api/v1/orders.json
+- PATH-TO-LOCAL-HOST/api/v1/orders.json
 (GET, POST)
 
-		NB: order_date is in format: YYYY-MM-DD 
-- pathToLocalHost/api/v1/orders/:id.json
+	POST example:
+
+		{
+        "customer_name": "David",
+        "order_date": "2015-12-12"
+        }
+   		 
+	order_date is in format: YYYY-MM-DD and must not be in the past
+		
+- PATH-TO-LOCAL-HOST/api/v1/orders/:id.json
 (GET, PUT)
+
+###Associations
+- Product has many line items (line item belongs to a product)
+- Order has many line items (line item belongs to an order)
+- Order has many products through line items (and vice versa)
 
 ##Spec
 Create a Rails/Grape based REST API for an order management system. It only needs to respond to JSON, no HTML necessary. Please incorporate the following requirements:

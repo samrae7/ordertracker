@@ -84,7 +84,7 @@ module Lineitemtracker
           })
           line_item.updateProductName
           line_item.updateTotals
-          order.updateTotals
+          order.updateTotalsdd
         else
           return "Line item cannot be changed as it belongs to an order that is not in DRAFT status"
         end

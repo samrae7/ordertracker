@@ -54,15 +54,18 @@ module Producttracker
         requires :id, type: String
         optional :name, type:String
         optional :net_price, type:Float
+        optional :vat, type:Float
       end
       
       put ':id' do
         product = Product.find(params[:id])
-        net_price = params[:net_price] ? params[:net_price] : product.net_price
         name = params[:name] ? params[:name] : product.name
+        net_price = params[:net_price] ? params[:net_price] : product.net_price
+        vat = params[:vat] ? params[:vat] : product.vat
         product.update({
           name:name,
-          net_price:net_price
+          net_price:net_price,
+          vat:vat
         })
       end
     end

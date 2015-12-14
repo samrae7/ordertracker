@@ -1,4 +1,4 @@
-#Order tracking with Rails and Grape
+#Order tracking API using Rails and Grape
 
 ### Code test Dec 2015
 

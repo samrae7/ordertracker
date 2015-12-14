@@ -54,7 +54,6 @@ module Lineitemtracker
 
       delete ':id' do
         line_item = LineItem.find(params[:id])
-        # order_id = line_item.order_id
         order = line_item.order
         if order.status === "DRAFT"
           line_item.destroy!

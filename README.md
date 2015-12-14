@@ -25,8 +25,6 @@
 - PATH-TO-LOCAL-HOST/api/v1/products/:id.json
 (GET, PUT, DELETE)
 
-		NB: cannot update "vat"
-
 ###Line items
 - PATH-TO-LOCAL-HOST/api/v1/line_items.json
 (GET, POST)

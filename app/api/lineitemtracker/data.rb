@@ -54,7 +54,7 @@ module Lineitemtracker
 
       delete ':id' do
         line_item = LineItem.find(params[:id])
-        order_id = line_item.order_id
+        # order_id = line_item.order_id
         order = line_item.order
         if order.status === "DRAFT"
           line_item.destroy!
@@ -75,21 +75,24 @@ module Lineitemtracker
       put ':id' do
         line_item = LineItem.find(params[:id])
         order_id = (params[:order_id] ? params[:order_id] : line_item.order_id)
-        order = Order.find(order_id)
-        if order.status === "DRAFT"  then
+        product_id = params[:product_id] ? params[:product_id] : line_item.product_id
+        if !Order.find(order_id) then
+          return "No such order"
+        elsif !Product.find(product_id) then
+          return "No such product"
+        elsif Order.find(order_id).status === "DRAFT"  then
           line_item.update({
           quantity:(params[:quantity] ? params[:quantity]: line_item.quantity),
           order_id:order_id,
-          product_id:(params[:product_id] ? params[:product_id] : line_item.product_id)
+          product_id:product_id
           })
           line_item.updateProductName
           line_item.updateTotals
-          order.updateTotalsdd
+          Order.find(order_id).updateTotals
         else
           return "Line item cannot be changed as it belongs to an order that is not in DRAFT status"
         end
       end
-
     end
   end
 end
